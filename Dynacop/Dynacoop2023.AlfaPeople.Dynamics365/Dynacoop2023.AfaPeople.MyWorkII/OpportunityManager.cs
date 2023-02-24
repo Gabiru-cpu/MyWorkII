@@ -25,7 +25,15 @@ namespace Dynacoop2023.AlfaPeople.MyWorkII
             Entity opportunity = new Entity();
             bool? incrementOrDecrement = null;
 
-            SetVariables(context, out opportunity, out incrementOrDecrement);
+
+            if (context.MessageName == "Delete")
+            {
+                opportunity = (Entity)context.PreEntityImages["PreImage"];
+                incrementOrDecrement = false;
+            }
+            else
+                incrementOrDecrement = null;
+
             ExecuteOpportunityProcess(context, opportunity, incrementOrDecrement);
         }
 
@@ -52,20 +60,6 @@ namespace Dynacoop2023.AlfaPeople.MyWorkII
             Entity oppAccount = contaController.GetAccountById(accountReference.Id, new string[] { "dcp_nmr_total_opp" });
             contaController.IncrementOrDecrementNumberOfOpp(oppAccount, incrementOrDecrement);
             return oppAccount;
-        }
-
-        private void SetVariables(IPluginExecutionContext context, out Entity opportunity, out bool? incrementOrDecrement)
-        {
-            if (context.MessageName == "Create")
-            {
-                opportunity = (Entity)context.InputParameters["Target"];
-                incrementOrDecrement = true;
-            }
-            else
-            {
-                opportunity = (Entity)context.PreEntityImages["PreImage"];
-                incrementOrDecrement = false;
-            }
         }
     }
 }
